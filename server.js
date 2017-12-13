@@ -10,6 +10,9 @@
 var express = require('express'),
   bodyParser = require('body-parser');
 
+// require database
+var db = require('./models');
+
 // generate a new express app and call it 'app'
 var app = express();
 
@@ -25,6 +28,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //  DATA
 ///////////////////
 
+
+/* DELETED ARRAY
 var books = [
   {
     _id: 15,
@@ -49,10 +54,8 @@ var books = [
   }
 ];
 
-
 var newBookUUID = 18;
-
-
+*/
 
 
 
@@ -73,33 +76,41 @@ app.get('/', function (req, res) {
 // get all books
 app.get('/api/books', function (req, res) {
   // send all books as JSON response
-  console.log('books index');
-  res.json(books);
-});
-
-// get one book
-app.get('/api/books/:id', function (req, res) {
-  // find one book by its id
-  console.log('books show', req.params);
-  for(var i=0; i < books.length; i++) {
-    if (books[i]._id === req.params.id) {
-      res.json(books[i]);
-      break; // we found the right book, we can stop searching
+  db.Book.find(function(err, books){
+    if (err) {
+      console.log("index error: " + err);
+      res.sendStatus(500);
     }
-  }
+    res.json(books);
+  });
 });
 
-// create new book
+// GET ONE BOOK
+app.get('/api/books/:id', function (req, res) {
+        // *get book id from url parameters = req.params.id
+  // find one book by its id
+  db.Book.findById(req.params.id, function(err, idBook) {
+    if (err) {
+      console.log("index error: " + err);
+      res.sendStatus(500);
+    }
+    res.json(idBook);
+  });
+});
+
+// CREATE NEW BOOK
 app.post('/api/books', function (req, res) {
   // create new book with form data (`req.body`)
-  console.log('books create', req.body);
-  var newBook = req.body;
-  newBook._id = newBookUUID++;
-  books.push(newBook);
-  res.json(newBook);
+  db.Book.create(req.body, function(err, createBook) {
+    if (err) {
+      console.log("index error: " + err);
+      res.SendStatus(500);
+    }
+    res.json(createBook)
+  });
 });
 
-// update book
+// UPDATE BOOK
 app.put('/api/books/:id', function(req,res){
 // get book id from url params (`req.params`)
   console.log('books update', req.params);
@@ -114,7 +125,7 @@ app.put('/api/books/:id', function(req,res){
   res.json(req.params);
 });
 
-// delete book
+// DELETE BOOK
 app.delete('/api/books/:id', function (req, res) {
   // get book id from url params (`req.params`)
   console.log('books delete', req.params);
