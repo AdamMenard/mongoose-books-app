@@ -87,7 +87,7 @@ app.get('/api/books', function (req, res) {
 
 // GET ONE BOOK
 app.get('/api/books/:id', function (req, res) {
-        // *get book id from url parameters = req.params.id
+        // * get book id from url parameters: req.params.id
   // find one book by its id
   db.Book.findById(req.params.id, function(err, idBook) {
     if (err) {
@@ -100,11 +100,11 @@ app.get('/api/books/:id', function (req, res) {
 
 // CREATE NEW BOOK
 app.post('/api/books', function (req, res) {
-  // create new book with form data (`req.body`)
+  // create new book with form data: ('req.body')
   db.Book.create(req.body, function(err, createBook) {
     if (err) {
-      console.log("index error: " + err);
-      res.SendStatus(500);
+      console.log("create error: " + err);
+      res.sendStatus(500);
     }
     res.json(createBook)
   });
@@ -112,37 +112,30 @@ app.post('/api/books', function (req, res) {
 
 // UPDATE BOOK
 app.put('/api/books/:id', function(req,res){
-// get book id from url params (`req.params`)
-  console.log('books update', req.params);
-  var bookId = req.params.id;
-  // find the index of the book we want to remove
-  var updateBookIndex = books.findIndex(function(element, index) {
-    return (element._id === parseInt(req.params.id)); //params are strings
+// * get book id from url parameters: req.params.id
+  db.Book.findByIdAndUpdate(req.params.id, function(err, updatedBook) {
+    if (err) {
+      console.log("update error: " + err);
+      res.sendStatus(500);
+    }
+    res.json(updatedBook);
   });
-  console.log('updating book with index', deleteBookIndex);
-  var bookToUpdate = books[deleteBookIndex];
-  books.splice(updateBookIndex, 1, req.params);
-  res.json(req.params);
 });
 
 // DELETE BOOK
 app.delete('/api/books/:id', function (req, res) {
-  // get book id from url params (`req.params`)
-  console.log('books delete', req.params);
-  var bookId = req.params.id;
-  // find the index of the book we want to remove
-  var deleteBookIndex = books.findIndex(function(element, index) {
-    return (element._id === parseInt(req.params.id)); //params are strings
+  // * get book id from url parameters: req.params.id
+  db.Book.findOneAndRemove(req.params.id, function(err, deletedBook) {
+    if (err) {
+      console.log("destroy error: " + err);
+      res.sendStatus(500);
+    }
+    res.json(deletedBook);
   });
-  console.log('deleting book with index', deleteBookIndex);
-  var bookToDelete = books[deleteBookIndex];
-  books.splice(deleteBookIndex, 1);
-  res.json(bookToDelete);
 });
 
 
-
-
+// PORT
 
 app.listen(process.env.PORT || 3000, function () {
   console.log('Book app listening at http://localhost:3000/');
