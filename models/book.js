@@ -4,9 +4,12 @@ var Schema = mongoose.Schema;
 // CREATE SCHEMA
 var BookSchema = new Schema({
       title: String,
-      author: String,
+      author: {
+        type: Schema.Types.ObjectId,
+        ref: 'Author'
+      },                          // ends author key: object pair
       image: String,
-      releaseDate: Date
+      releaseDate: String // could be: Date
 });
 
 var Book = mongoose.model('Book', BookSchema);
