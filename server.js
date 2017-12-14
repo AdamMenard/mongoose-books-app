@@ -20,7 +20,10 @@ app.get('/', function (req, res) {
   res.sendFile('views/index.html' , { root : __dirname});
 });
 
-// get all books
+
+
+// GET ALL BOOKS
+//***************************
 app.get('/api/books', function (req, res) {
   // find one book by its id
   db.Book.find({})
@@ -92,7 +95,8 @@ function createBookWithAuthorAndRespondTo(book, author, res) {
 }
 
 
-// delete book
+// DELETE BOOK
+//***************************
 app.delete('/api/books/:id', function (req, res) {
   // get book id from url params (`req.params`)
   console.log(req.params)
